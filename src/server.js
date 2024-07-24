@@ -3,7 +3,7 @@ import cors from 'cors';
 import pino from 'pino';
 import pinoHttp from 'pino-http';
 
-// Ініціалізуємо логер
+// Ініціалізуємо обробник http-запитів
 const logger = pino();
 const pinoMiddleware = pinoHttp({ logger });
 
@@ -13,6 +13,17 @@ function setupServer() {
   app.use(cors()); // Використання CORS
   
   app.use(pinoMiddleware); // Використання Pino для логування
+
+  // Простий маршрут
+  app.get('/', (req, res) => {
+    res.send('Hello World!');
+  });
+
+  // Маршрут для перевірки здоров'я сервера
+  app.get('/health', (req, res) => {
+    res.json({ status: 'UP' });
+  });  
+
   
   // Обробка неіснуючих маршрутів
   app.use((req, res, next) => {
@@ -24,6 +35,7 @@ function setupServer() {
   app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
   });
+
 
   return app;
 }

@@ -1,7 +1,12 @@
-// const message = "Hello World!";
-
-// console.log(message);
-
+import initMongoConnection from './db/initMongoConnection.js';
 import setupServer from './server.js';
 
-setupServer();
+// Підключаємося до MongoDB
+initMongoConnection()
+  .then(() => {
+    
+    setupServer(); // Запуск сервера після встановлення з'єднання з БД
+  })
+  .catch((error) => {
+    console.error("Failed to initialize MongoDB connection:", error);
+  });
