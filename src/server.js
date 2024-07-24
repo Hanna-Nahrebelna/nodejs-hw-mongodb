@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import pino from 'pino';
 import pinoHttp from 'pino-http';
+import getContacts from './controllers/contactController.js';
 
 // Ініціалізуємо обробник http-запитів
 const logger = pino();
@@ -22,7 +23,10 @@ function setupServer() {
   // Маршрут для перевірки здоров'я сервера
   app.get('/health', (req, res) => {
     res.json({ status: 'UP' });
-  });  
+  });
+  
+  // Маршрут для отримання всіх контактів
+  app.get('/contacts', getContacts);
 
   
   // Обробка неіснуючих маршрутів

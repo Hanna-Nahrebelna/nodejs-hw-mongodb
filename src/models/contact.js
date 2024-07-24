@@ -5,13 +5,13 @@ const contactSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    phoneNumber: {
+    phone: {
         type: String,
         required: true
     },
     email: {
         type: String,
-        required: false        
+        required: true        
     },
     isFavourite: {
         type: Boolean,
