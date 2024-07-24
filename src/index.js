@@ -1,3 +1,7 @@
-const message = "Hello World!";
+// const message = "Hello World!";
 
-console.log(message);
+// console.log(message);
+
+import setupServer from './server.js';
+
+setupServer();
