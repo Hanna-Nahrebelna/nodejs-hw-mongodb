@@ -10,4 +10,14 @@ const getAllContacts = async () => {
   }
 };
 
+// іменований експорт функції для отримання контакту за ID
+export const getContactById = async (id) => {
+  try {
+    const contact = await Contact.findById(id); // отримання контакту за ID
+    return contact;
+  } catch (error) {
+    throw new Error('Error fetching contact by ID: ' + error.message);
+  }
+};
+
 export default getAllContacts;
