@@ -20,4 +20,15 @@ export const getContactById = async (id) => {
   }
 };
 
+// Функція для створення нового контакту
+export const addContact = async (contactData) => {
+  try {
+    const contact = new Contact(contactData);
+    await contact.save(); // Збереження контакту в базі даних
+    return contact;
+  } catch (error) {
+    throw new Error('Error creating contact: ' + error.message);
+  }
+};
+
 export default getAllContacts;
