@@ -1,9 +1,10 @@
 import Contact from '../models/contact.js';
 
 // Функція для отримання всіх контактів
-const getAllContacts = async () => {
+const getAllContacts = async ({ page, limit }) => {
   try {
-    const contacts = await Contact.find(); // Отримання всіх контактів
+    // Ообробка параметрів пагінації при отриманні всіх контактів
+    const contacts = await Contact.paginate({}, { page, limit }); 
     return contacts;
   } catch (error) {
     throw new Error('Error fetching contacts: ' + error.message);

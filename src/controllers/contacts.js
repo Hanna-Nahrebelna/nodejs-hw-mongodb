@@ -5,11 +5,31 @@ import createError from 'http-errors';
 // Контролер для отримання всіх контактів
 export const getContacts = async (req, res, next) => {
   try {
-    const contacts = await getAllContacts(); 
+    const { page = 1, perPage = 10, sortBy = 'name', sortOrder = 'asc', type, isFavourite } = req.query;
+    
+    // фільтрація контактів за типом та улюбленими контактами
+    const filter = {};
+    if (type) filter.contactType = type;
+    if (isFavourite !== undefined) filter.isFavourite = isFavourite === 'true';
+    
+    const options = {
+      page: parseInt(page),
+      limit: parseInt(perPage),
+      sort: { [sortBy]: sortOrder === 'asc' ? 1 : -1 },
+    };
+
+    const contacts = await getAllContacts(filter, options);
+
     res.status(200).json({
       status: 200,
       message: 'Successfully found contacts!',
-      data: contacts,
+      data: contacts.docs, // Масив контактів з поточної сторінки
+      page: contacts.page,
+      perPage: contacts.limit,
+      totalItems: contacts.totalDocs,
+      totalPages: contacts.totalPages,
+      hasPreviousPage: contacts.hasPrevPage,
+      hasNextPage: contacts.hasNextPage,
     });
   } catch (error) {
     next(createError(500, error.message));
