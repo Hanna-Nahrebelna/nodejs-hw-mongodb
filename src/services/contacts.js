@@ -31,4 +31,24 @@ export const addContact = async (contactData) => {
   }
 };
 
+// Функція для оновлення контакту
+export const updateContactData = async (id, updateData) => {
+  try {
+    const updatedContact = await Contact.findByIdAndUpdate(id, updateData, { new: true });
+    return updatedContact;
+  } catch (error) {
+    throw new Error('Error updating contact: ' + error.message);
+  }
+};
+
+// Функція для видалення контакту
+export const deleteContactById = async (id) => {
+  try {
+    const deletedContact = await Contact.findByIdAndDelete(id);
+    return deletedContact;
+  } catch (error) {
+    throw new Error('Error deleting contact: ' + error.message);
+  }
+};
+
 export default getAllContacts;
