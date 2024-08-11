@@ -28,7 +28,7 @@ function setupServer() {
   });
 
   // Маршрути контактів
-  app.use('/api', router); // Префікс для всіх маршрутів контактів  
+  app.use('/', router); // Префікс для всіх маршрутів контактів  
   
   // Middleware для обробки неіснуючих маршрутів
   app.use(notFoundHandler);
