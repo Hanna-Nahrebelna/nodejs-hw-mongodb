@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import mongoosePaginate from 'mongoose-paginate-v2';
 
 const contactSchema = new mongoose.Schema({
     name: {
@@ -26,6 +27,9 @@ const contactSchema = new mongoose.Schema({
 }, {
     timestamps: true // Автоматичне створення createdAt та updatedAt
 });
+
+// Підключення плагіна пагінації
+contactSchema.plugin(mongoosePaginate);
 
 // Створення моделі
 const Contact = mongoose.model('Contact', contactSchema);
