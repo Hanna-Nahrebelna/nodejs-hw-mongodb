@@ -13,9 +13,9 @@ const pinoMiddleware = pinoHttp({ logger });
 // Налаштування сервера
 function setupServer() {
   const app = express();
-  app.use(cors()); // Використання CORS
-  app.use(express.json()); // для обробки JSON-тіла запитів
-  app.use(pinoMiddleware); // Використання Pino для логування
+  app.use(cors()); // Використання CORS (обробка запитів з інших доменів)
+  app.use(express.json()); // Middleware для автоматичного розпізнавання JSON у запита
+  app.use(pinoMiddleware); // Middleware для логування запитів за допомогою Pino
 
   // Простий маршрут
   app.get('/', (req, res) => {
@@ -36,7 +36,7 @@ function setupServer() {
   // Middleware для обробки помилок
   app.use(errorHandler);
 
-  // Запуск сервера
+  // Запуск сервера на вказаному порту
   const PORT = process.env.PORT || 3000;
   app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
@@ -45,4 +45,5 @@ function setupServer() {
   return app;
 }
 
-export default setupServer;
+// Додайте цей виклик для запуску сервера
+setupServer(); 

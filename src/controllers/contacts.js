@@ -1,95 +1,78 @@
 import getAllContacts from '../services/contacts.js';
-import { getContactById, addContact, updateContactData, deleteContactById} from '../services/contacts.js';
-import createError from 'http-errors';
+import { getContactById, addContact, updateContactData, deleteContactById } from '../services/contacts.js';
 
 // Контролер для отримання всіх контактів
 export const getContacts = async (req, res, next) => {
-  try {
-    const contacts = await getAllContacts(); 
-    res.status(200).json({
-      status: 200,
-      message: 'Successfully found contacts!',
-      data: contacts,
-    });
-  } catch (error) {
-    next(createError(500, error.message));
-  }
+  const contacts = await getAllContacts();
+  res.status(200).json({
+    status: 200,
+    message: 'Successfully found contacts!',
+    data: contacts,
+  });
 };
 
 // Контролер для отримання контакту за ID
 export const getContact = async (req, res, next) => {
-  try {
-    const contact = await getContactById(req.params.id); 
-    if (!contact) {
-      return next(createError(404, "Contact not found"));
-    } else {
-      res.status(200).json({
-        status: 200,
-        message: 'Contact found',
-        data: contact,
-      });
-    }
-  } catch (error) {
-    next(createError(500, error.message));
+  const contact = await getContactById(req.params.id); 
+  if (!contact) {
+    return res.status(404).json({
+      status: 404,
+      message: 'Contact not found',
+      data: contact,
+    });
   }
+  res.status(200).json({
+    status: 200,
+    message: 'Contact found',
+    data: contact,
+  });
 };
 
 // Контролер для створення нового контакту
 export const createContact = async (req, res, next) => {
-  try {
-    const { name, phoneNumber, email, isFavourite, contactType } = req.body;
+  console.log('Request body:', req.body); // Логування запиту
 
-    if (!name || !phoneNumber || !contactType) {
-      return next(createError(400, "Name, phoneNumber, and contactType are required"));
-    }
+  const newContact = await addContact(req.body);
 
-    const newContact = await addContact({ name, phoneNumber, email, isFavourite, contactType });
-
-    res.status(201).json({
-      status: 201,
-      message: 'Successfully created a contact!',
-      data: newContact,
-    });
-  } catch (error) {
-    next(createError(500, error.message));
-  }
+  res.status(201).json({
+    status: 201,
+    message: 'Successfully created a contact!',
+    data: newContact,
+  });
 };
 
 // Контролер для оновлення існуючого контакту
 export const modifyContact = async (req, res, next) => {
-  try {
-    const contactId = req.params.id;
-    const updateData = req.body;
+  const contactId = req.params.id;
+  const updatedContact = await updateContactData(contactId, req.body);
 
-    const updatedContact = await updateContactData(contactId, updateData);
-
-    if (!updatedContact) {
-      return next(createError(404, 'Contact not found'));
-    }
-
-    res.status(200).json({
-      status: 200,
-      message: 'Successfully patched a contact!',
-      data: updatedContact,
+  if (!updatedContact) {
+    return res.status(404).json({
+      status: 404,
+      message: 'Contact not found',
+      data: null
     });
-  } catch (error) {
-    next(createError(500, error.message));
   }
+
+  res.status(200).json({
+    status: 200,
+    message: 'Successfully patched a contact!',
+    data: updatedContact,
+  });
 };
 
 // Контролер для видалення існуючого контакту
 export const removeContact = async (req, res, next) => {
-  try {
-    const contactId = req.params.id;
-    const deleted = await deleteContactById(contactId);
+  const contactId = req.params.id;
+  const deleted = await deleteContactById(contactId);
 
-    if (!deleted) {
-      return next(createError(404, 'Contact not found'));
-    }
-
-    res.status(204).send(); // Успішне видалення контакту, відповідь без тіла
-  } catch (error) {
-    next(createError(500, error.message));
+  if (!deleted) {
+    return res.status(404).json({
+      status: 404,
+      message: 'Contact not found',
+      data: null
+    });
   }
-};
 
+  res.status(204).send(); // Успішне видалення контакту, відповідь без тіла
+};

@@ -10,7 +10,7 @@ const getAllContacts = async () => {
   }
 };
 
-// іменований експорт функції для отримання контакту за ID
+// Іменований експорт функції для отримання контакту за ID
 export const getContactById = async (id) => {
   try {
     const contact = await Contact.findById(id); // отримання контакту за ID
@@ -24,6 +24,10 @@ export const getContactById = async (id) => {
 export const addContact = async (contactData) => {
   try {
     const contact = new Contact(contactData);
+
+    // Видалення поля __v
+    contact.__v = undefined;
+
     await contact.save(); // Збереження контакту в базі даних
     return contact;
   } catch (error) {

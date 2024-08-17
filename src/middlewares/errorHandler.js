@@ -1,9 +1,8 @@
-const errorHandler = (err, req, res, next) => {
-  const statusCode = err.status || 500;
-  res.status(statusCode).json({
-    status: statusCode,
+const errorHandler = (err, req, res, next) => {  
+  res.status(err.status || 500).json({
+    status: err.status || 500,
     message: "Something went wrong",
-    data: err.message,
+    data: err.message || 'Internal Server Error',
   });
 };
 
