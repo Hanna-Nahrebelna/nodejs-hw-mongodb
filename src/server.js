@@ -52,5 +52,12 @@ async function setupServer() {
   return app;
 }
 
-// Виклик для запуску сервера
-setupServer(); 
+// Якщо цей файл запущено безпосередньо, викликаємо setupServer
+if (import.meta.url.endsWith('/src/server.js')) {
+  setupServer().catch(err => {
+    console.error('Error during server startup:', err);
+    process.exit(1);
+  });
+}
+
+export default setupServer;
