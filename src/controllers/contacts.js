@@ -1,5 +1,5 @@
 import { getContactById, addContact, updateContactData, deleteContactById} from '../services/contacts.js';
-import createError from 'http-errors';
+import createHttpError from 'http-errors';
 import Contact from '../models/contact.js';
 
 
@@ -46,11 +46,7 @@ export const getContacts = async (req, res, next) => {
 export const getContact = async (req, res, next) => {
     const contact = await getContactById(req.params.id);
     if (!contact) {
-      return res.status(404).json({
-        status: 404,
-        message: "Contact not found",
-        data: null,
-      });
+      throw createHttpError(404, 'Contact not found');
   }  
 
   const page = 2;
@@ -61,7 +57,7 @@ export const getContact = async (req, res, next) => {
   
       res.status(200).json({
         status: 200,
-        message: "Successfully found contact!",
+        message: `Successfully found contact with id ${contact}!`,
         data: contact,
         page: page,
         perPage: perPage,
@@ -76,15 +72,15 @@ export const getContact = async (req, res, next) => {
 export const createContact = async (req, res, next) => {
     const { name, phoneNumber, email, isFavourite, contactType } = req.body;
 
-    if (!name || !phoneNumber || !contactType) {
-      return next(createError(400, "Name, phoneNumber, and contactType are required"));
+  if (!name || !phoneNumber || !contactType) {
+      throw createHttpError(400, "Name, phoneNumber, and contactType are required");
     }
 
     const newContact = await addContact({ name, phoneNumber, email, isFavourite, contactType });
 
     res.status(201).json({
       status: 201,
-      message: 'Successfully created a contact!',
+      message: `Successfully created a contact!`,
       data: newContact,
     });  
 };
@@ -94,13 +90,9 @@ export const modifyContact = async (req, res, next) => {
     const contactId = req.params.id;
     const updatedContact = await updateContactData(contactId, req.body);
 
-    if (!updatedContact) {
-      return res.status(404).json({
-        status: 404,
-        message: 'Contact not found',
-        data: null
-      });
-    }
+  if (!updatedContact) {
+    throw createHttpError(404, "Contact not found");      
+  }
 
     res.status(200).json({
       status: 200,
@@ -114,12 +106,8 @@ export const removeContact = async (req, res, next) => {
     const contactId = req.params.id;
     const deleted = await deleteContactById(contactId);
 
-    if (!deleted) {
-      return res.status(404).json({
-      status: 404,
-      message: 'Contact not found',
-      data: null
-    });
+  if (!deleted) {
+    throw createHttpError(404, "Contact not found");      
   }  
 
     res.status(204).send(); // Успішне видалення контакту, відповідь без тіла
