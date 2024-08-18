@@ -1,4 +1,5 @@
 import express from 'express';
+import ctrlWrapper from '../utils/ctrlWrapper.js';
 import {
   getContacts,
   getContact,
@@ -6,7 +7,8 @@ import {
   modifyContact,
   removeContact
 } from '../controllers/contacts.js';
-import ctrlWrapper from '../utils/ctrlWrapper.js';
+
+
 
 const router = express.Router();
 
@@ -19,5 +21,6 @@ router.post('/contacts', ctrlWrapper(createContact)); // Новий маршру
 router.patch('/contacts/:id', ctrlWrapper(modifyContact)); // Маршрут для оновлення контакту
 
 router.delete('/contacts/:id', ctrlWrapper(removeContact)); // Маршрут для видалення контакту
+
 
 export default router;
