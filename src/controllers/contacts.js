@@ -87,11 +87,17 @@ export const createContact = async (req, res, next) => {
 
 // Контролер для оновлення існуючого контакту
 export const modifyContact = async (req, res, next) => {
-    const contactId = req.params.id;
-    const updatedContact = await updateContactData(contactId, req.body);
+  const contactId = req.params.id;
+  const { phoneNumber } = req.body;    
 
-  if (!updatedContact) {
+  if (!phoneNumber) {
     throw createHttpError(404, "Contact not found");      
+  }
+
+  const updatedContact = await updateContactData(contactId, req.body);
+
+  if (!updatedContact) {            
+    return next(createHttpError(404, 'Contact not found'));
   }
 
     res.status(200).json({
