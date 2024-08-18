@@ -13,10 +13,13 @@ import { contactValidationSchema, contactUpdateValidationSchema } from '../valid
 
 const router = express.Router();
 
-router.get('/contacts', ctrlWrapper(getContacts)); // Маршрут для отримання всіх контактів
-router.get('/contacts/:id', isValidID, ctrlWrapper(getContact)); // Маршрут для отримання одного контакту за ID
-router.post('/contacts', validateBody(contactValidationSchema), ctrlWrapper(createContact)); // Новий маршрут для створення контакту
-router.patch('/contacts/:id', isValidID, validateBody(contactUpdateValidationSchema), ctrlWrapper(modifyContact)); // Маршрут для оновлення контакту
-router.delete('/contacts/:id', isValidID, ctrlWrapper (removeContact)); // Маршрут для видалення контакту
+router.route('/contacts')
+  .get(ctrlWrapper(getContacts)) // Маршрут для отримання всіх контактів
+  .post(validateBody(contactValidationSchema), ctrlWrapper(createContact)); // Новий маршрут для створення контакту
+
+router.route('/contacts/:id')
+  .get(isValidID, ctrlWrapper(getContact)) // Маршрут для отримання одного контакту за ID
+  .patch(isValidID, validateBody(contactUpdateValidationSchema), ctrlWrapper(modifyContact)) // Маршрут для оновлення контакту
+  .delete(isValidID, ctrlWrapper(removeContact)); // Маршрут для видалення контакту
 
 export default router;
