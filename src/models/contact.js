@@ -1,20 +1,36 @@
 import mongoose from 'mongoose';
-import mongoosePaginate from 'mongoose-paginate-v2';
 
-const contactSchema = new mongoose.Schema({
-    name: String,
-    phoneNumber: String,
-    email: String,
-    isFavourite: Boolean,
-    contactType: String,
-    createdAt: { type: Date, default: Date.now },
-    updatedAt: { type: Date, default: Date.now }
-});
+const contactSchema = new mongoose.Schema(
+    {
+        name: {
+        type: String,
+        required: true,
+        },
+        phoneNumber: {
+        type: String,
+        required: true,
+        },
+        email: {
+        type: String,
+        required: true,
+        },
+        isFavourite: {
+        type: Boolean,
+        required: true,
+        default: false,
+        },
+        contactType: {
+        type: String,
+        required: true,        
+        },
+    },
+    {
+    timestamps: true,
+  },
+);
 
-// Підключення плагіна пагінації
-contactSchema.plugin(mongoosePaginate);
 
-// Створення моделі
+// Колекція понтактів
 const Contact = mongoose.model('Contact', contactSchema);
 
 export default Contact;

@@ -48,23 +48,11 @@ export const getContact = async (req, res, next) => {
     if (!contact) {
       throw createHttpError(404, 'Contact not found');
   }  
-
-  const page = 2;
-  const perPage = 4;
-  const totalItems = 6;
-  const totalPages = Math.ceil(totalItems / perPage);
-  
   
       res.status(200).json({
         status: 200,
-        message: `Successfully found contact with id ${contact}!`,
+        message: `Successfully found contact with id ${req.params.id}!`,
         data: contact,
-        page: page,
-        perPage: perPage,
-        totalItems: totalItems,
-        totalPages: totalPages,
-        hasPreviousPage: page > 1,
-        hasNextPage: page < totalPages
       });
 };
 
