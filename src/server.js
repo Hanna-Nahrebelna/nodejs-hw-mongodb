@@ -2,10 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import pino from 'pino';
 import pinoHttp from 'pino-http';
-import router from './routers/contacts.js';
-import errorHandler from './middlewares/errorHandler.js';
-import notFoundHandler from './middlewares/notFoundHandler.js';
-
+import { getContacts, getContact, createContact, modifyContact, removeContact } from './controllers/contacts.js';
 
 // Ініціалізуємо обробник http-запитів
 const logger = pino();
@@ -13,29 +10,28 @@ const pinoMiddleware = pinoHttp({ logger });
 
 // Налаштування сервера
 function setupServer() {
+
   const app = express();
+  
   app.use(cors()); // Використання CORS
-  app.use(express.json()); // для обробки JSON-тіла запитів
-  app.use(pinoMiddleware); // Використання Pino для логування
+  app.use(express.json()); // Middleware для автоматичного розпізнавання JSON у запитах
+  app.use(pinoMiddleware); // Middleware для логування запитів за допомогою Pino
 
   // Простий маршрут
-  app.get('/', (req, res) => {
+  app.get('/', (_req, res) => {
     res.send('Hello World!');
   });
-
-  // Маршрут для перевірки здоров'я сервера
-  app.get('/health', (req, res) => {
-    res.json({ status: 'UP' });
-  });
-
-  // Маршрути контактів
-  app.use('/', router); // Префікс для всіх маршрутів контактів  
   
-  // Middleware для обробки неіснуючих маршрутів
-  app.use(notFoundHandler);
-
-  // Middleware для обробки помилок
-  app.use(errorHandler);
+  app.get('/health', (_req, res) => {res.json({ status: 'UP' });}); // Маршрут для перевірки здоров'я сервера
+  app.get('/contacts', getContacts); // Маршрут для отримання всіх контактів
+  app.get('/contacts/:id', getContact); // Маршрут для отримання одного контакту за ID
+  app.post('/contacts', createContact); // Маршрут для створення нового контакту
+  app.patch('/contacts/:id', modifyContact); // Маршрут для оновлення існуючого контакту
+  app.delete('/contacts/:id', removeContact); // Маршрут для видалення існуючого контакту
+  
+  app.use((_req, res, _next) => {
+    res.status(404).json({ message: 'Not found' });
+  }); // Обробка неіснуючих маршрутів
 
   // Запуск сервера
   const PORT = process.env.PORT || 3000;
