@@ -5,18 +5,18 @@ import pinoHttp from 'pino-http';
 import router from './routers/contacts.js';
 import errorHandler from './middlewares/errorHandler.js';
 import notFoundHandler from './middlewares/notFoundHandler.js';
-import initMongoConnection from './db/initMongoConnection.js'; // Підключення до MongoDB
+
 
 // Ініціалізуємо обробник http-запитів
 const logger = pino();
 const pinoMiddleware = pinoHttp({ logger });
 
 // Налаштування сервера
-async function setupServer() {
+function setupServer() {
   const app = express();
-  app.use(cors()); // Використання CORS (обробка запитів з інших доменів)
-  app.use(express.json()); // Middleware для автоматичного розпізнавання JSON у запита
-  app.use(pinoMiddleware); // Middleware для логування запитів за допомогою Pino
+  app.use(cors()); // Використання CORS
+  app.use(express.json()); // для обробки JSON-тіла запитів
+  app.use(pinoMiddleware); // Використання Pino для логування
 
   // Простий маршрут
   app.get('/', (req, res) => {
@@ -29,7 +29,7 @@ async function setupServer() {
   });
 
   // Маршрути контактів
-  app.use('/', router); // для всіх маршрутів контактів  
+  app.use('/', router); // Префікс для всіх маршрутів контактів  
   
   // Middleware для обробки неіснуючих маршрутів
   app.use(notFoundHandler);
@@ -37,27 +37,13 @@ async function setupServer() {
   // Middleware для обробки помилок
   app.use(errorHandler);
 
-  try {
-    await initMongoConnection(); // Очікування завершення підключення до MongoDB
-    // Запуск сервера на вказаному порту
+  // Запуск сервера
   const PORT = process.env.PORT || 3000;
   app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
-  });    
-  } catch (error) {
-    console.error('Error starting the server:', error);
-    process.exit(1); // Завершення процесу з помилкою
-  }  
+  });
 
   return app;
-}
-
-// Якщо цей файл запущено безпосередньо, викликаємо setupServer
-if (import.meta.url.endsWith('/src/server.js')) {
-  setupServer().catch(err => {
-    console.error('Error during server startup:', err);
-    process.exit(1);
-  });
 }
 
 export default setupServer;
